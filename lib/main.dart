@@ -1,4 +1,6 @@
 import 'dart:io';
+import 'package:demoapp/screens/admregister_screen.dart';
+import 'package:demoapp/screens/homescreen.dart';
 import 'package:demoapp/screens/login_screen.dart';
 import 'package:demoapp/onboarding_screen/onboarding_screen.dart';
 import 'package:demoapp/screens/office_auth.dart';
@@ -20,8 +22,6 @@ void main() async {
       : await Firebase.initializeApp();
 
   runApp(const MyApp());
-
-  
 }
 
 class MyApp extends StatelessWidget {
@@ -38,7 +38,7 @@ class MyApp extends StatelessWidget {
             ColorScheme.fromSeed(seedColor: Color.fromARGB(255, 1, 27, 69)),
         useMaterial3: true,
       ),
-      home: OfficeAuth(),
+      home: HomeScreen(),
     );
   }
 }
