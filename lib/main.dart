@@ -1,8 +1,9 @@
 import 'dart:io';
-import 'package:demoapp/screens/home_screen.dart';
+import 'package:demoapp/screens/admregister_screen.dart';
 import 'package:demoapp/screens/homescreen.dart';
 import 'package:demoapp/screens/login_screen.dart';
 import 'package:demoapp/onboarding_screen/onboarding_screen.dart';
+import 'package:demoapp/screens/office_auth.dart';
 import 'package:demoapp/screens/splash_screen.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
@@ -16,6 +17,7 @@ void main() async {
           appId: '1:1047257889188:android:830dd53a288ac9d9e86931',
           messagingSenderId: '1047257889188',
           projectId: 'demoapp-4f587',
+          storageBucket: "demoapp-4f587.appspot.com",
         ))
       : await Firebase.initializeApp();
 
@@ -36,7 +38,7 @@ class MyApp extends StatelessWidget {
             ColorScheme.fromSeed(seedColor: Color.fromARGB(255, 1, 27, 69)),
         useMaterial3: true,
       ),
-      home: SplashScreen(),
+      home: HomeScreen(),
     );
   }
 }
