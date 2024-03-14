@@ -71,6 +71,10 @@ flutter:
   
       - assets/loginimg.png
       - assets/pngegg.png
+      - assets/obs2.png
+      - assets/obs3.jpg
+      - assets/obs4.png
+      - assets/obs5.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware

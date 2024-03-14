@@ -1,5 +1,4 @@
 import 'dart:io';
-import 'package:demoapp/screens/admregister_screen.dart';
 import 'package:demoapp/screens/login_screen.dart';
 import 'package:demoapp/onboarding_screen/onboarding_screen.dart';
 import 'package:demoapp/screens/office_auth.dart';
