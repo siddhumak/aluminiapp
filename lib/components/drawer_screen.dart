@@ -1,6 +1,7 @@
 import 'package:demoapp/components/llist_tiles.dart';
 import 'package:demoapp/screens/Profile_Screen.dart';
 import 'package:demoapp/screens/login_screen.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 class MyDrawer extends StatelessWidget {
@@ -8,6 +9,7 @@ class MyDrawer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    FirebaseAuth auth = FirebaseAuth.instance;
     return Drawer(
       backgroundColor: Color.fromARGB(255, 1, 27, 69),
       child: Column(
@@ -44,8 +46,14 @@ class MyDrawer extends StatelessWidget {
             child: MyListTile(
               icon: Icons.logout,
               text: 'L O G O U T',
-              onTap: () => Navigator.of(context)
-                  .push(MaterialPageRoute(builder: (context) => LoginScreen())),
+              onTap: () async {
+                auth.signOut().then(
+                  (value) {
+                    Navigator.push(context,
+                        MaterialPageRoute(builder: (context) => LoginScreen()));
+                  },
+                );
+              },
             ),
           ),
         ],

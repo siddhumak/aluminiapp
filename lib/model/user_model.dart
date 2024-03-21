@@ -1,10 +1,18 @@
+// ignore_for_file: public_member_api_docs, sort_constructors_first
 class UserModel {
   String? uid;
   String? email;
   String? firstName;
   String? secondName;
+  String? profile;
 
-  UserModel({this.uid, this.email, this.firstName, this.secondName});
+  UserModel({
+    this.uid,
+    this.email,
+    this.firstName,
+    this.secondName,
+    this.profile,
+  });
 
 //receive data from server
   factory UserModel.fromMap(map) {
@@ -13,6 +21,7 @@ class UserModel {
       email: map['email'],
       firstName: map['firstName'],
       secondName: map['secondName'],
+      profile: map['profile'],
     );
   }
   //sending data to our server
@@ -22,6 +31,7 @@ class UserModel {
       'email': email,
       'firstName': firstName,
       'secondName': secondName,
+      'profile': profile,
     };
   }
 }

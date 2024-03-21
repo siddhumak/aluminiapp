@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:demoapp/screens/add_post_screen.dart';
 import 'package:demoapp/screens/admregister_screen.dart';
 import 'package:demoapp/screens/homescreen.dart';
 import 'package:demoapp/screens/login_screen.dart';
@@ -10,16 +11,21 @@ import 'package:flutter/material.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  Platform.isAndroid
-      ? await Firebase.initializeApp(
-          options: const FirebaseOptions(
-          apiKey: 'AIzaSyB5ocmM6k9zVb2vMSgX4Ak0SjQ2ZkURJGk',
-          appId: '1:1047257889188:android:830dd53a288ac9d9e86931',
-          messagingSenderId: '1047257889188',
-          projectId: 'demoapp-4f587',
-          storageBucket: "demoapp-4f587.appspot.com",
-        ))
-      : await Firebase.initializeApp();
+
+  // Initialize Firebase
+  if (Platform.isAndroid) {
+    await Firebase.initializeApp(
+      options: FirebaseOptions(
+        apiKey: 'AIzaSyB5ocmM6k9zVb2vMSgX4Ak0SjQ2ZkURJGk',
+        appId: '1:1047257889188:android:830dd53a288ac9d9e86931',
+        messagingSenderId: '1047257889188',
+        projectId: 'demoapp-4f587',
+        storageBucket: 'demoapp-4f587.appspot.com',
+      ),
+    );
+  } else if (Platform.isIOS) {
+    await Firebase.initializeApp();
+  }
 
   runApp(const MyApp());
 }
@@ -27,7 +33,6 @@ void main() async {
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
