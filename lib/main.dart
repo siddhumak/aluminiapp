@@ -1,10 +1,17 @@
 import 'dart:io';
+import 'package:demoapp/components/drawer_screen.dart';
+import 'package:demoapp/screens/admregister_screen.dart';
+import 'package:demoapp/screens/chat_screen.dart';
+import 'package:demoapp/screens/job_form.dart';
 import 'package:demoapp/screens/login_screen.dart';
 import 'package:demoapp/onboarding_screen/onboarding_screen.dart';
 import 'package:demoapp/screens/office_auth.dart';
+import 'package:demoapp/screens/sms.dart';
 import 'package:demoapp/screens/splash_screen.dart';
+import 'package:demoapp/screens/view_job.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -38,7 +45,7 @@ class MyApp extends StatelessWidget {
             ColorScheme.fromSeed(seedColor: Color.fromARGB(255, 1, 27, 69)),
         useMaterial3: true,
       ),
-      home: OfficeAuth(),
+      home: SendSMSPage(),
     );
   }
 }

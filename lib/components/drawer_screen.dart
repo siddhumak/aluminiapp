@@ -1,5 +1,6 @@
 import 'package:demoapp/components/llist_tiles.dart';
 import 'package:demoapp/screens/Profile_Screen.dart';
+import 'package:demoapp/screens/chat_screen.dart';
 import 'package:demoapp/screens/login_screen.dart';
 import 'package:flutter/material.dart';
 
@@ -37,6 +38,11 @@ class MyDrawer extends StatelessWidget {
                 text: 'S E T T I N G S',
                 onTap: () => Navigator.pop(context),
               ),
+              MyListTile(
+                icon: Icons.chat,
+                text: 'D I S C U S S I O N',
+                onTap: () => Navigator.of(context).push(
+                  MaterialPageRoute(builder: (context) =>  ChatScreen())),)
             ],
           ),
           Padding(

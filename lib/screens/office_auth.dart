@@ -43,8 +43,9 @@ class OfficeAuth extends StatelessWidget {
                                 imageUrl != null
                                     ? Image.network(
                                         imageUrl,
-                                        width: 500,
+                                        width: 800,
                                         height: 300,
+                                        fit: BoxFit.fill,
                                       )
                                     : Text('Document: N/A'),
                               ],

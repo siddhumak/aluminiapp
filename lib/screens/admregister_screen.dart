@@ -150,7 +150,17 @@ class _AdminRegState extends State<AdminReg> {
                             "phoneno": phonenoController.text,
                             'passout': _dateController.text,
                             'imageUrl': imageUrl,
-                          });
+                          }).then((_){
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(content: Text('Data Submitted Successfully'),),
+                            );
+
+                          },);
+
+                          secondEditingController.clear();
+                          emailEditingController.clear();
+                          phonenoController.clear();
+                          _dateController.clear();
                         });
                       });
                     },
