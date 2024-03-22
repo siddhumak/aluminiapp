@@ -1,11 +1,13 @@
 import 'dart:ffi';
-import 'package:demoapp/screens/storage_service.dart';
-import 'package:flutter/rendering.dart';
-import 'package:file_picker/file_picker.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:file_picker/file_picker.dart';
 import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
+import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
+import 'package:flutter/widgets.dart';
+
+import 'package:demoapp/screens/storage_service.dart';
 
 class AdminReg extends StatefulWidget {
   const AdminReg({Key? key});
@@ -15,10 +17,8 @@ class AdminReg extends StatefulWidget {
 }
 
 class _AdminRegState extends State<AdminReg> {
-  final TextEditingController secondEditingController =
-      TextEditingController();
-  final TextEditingController emailEditingController =
-      TextEditingController();
+  final TextEditingController secondEditingController = TextEditingController();
+  final TextEditingController emailEditingController = TextEditingController();
   final TextEditingController phonenoController = TextEditingController();
   final TextEditingController _dateController = TextEditingController();
   late String _filePath = "";
@@ -125,8 +125,8 @@ class _AdminRegState extends State<AdminReg> {
                   height: 50,
                   child: ElevatedButton(
                     onPressed: () async {
-                      final result =
-                          await FilePicker.platform.pickFiles(allowMultiple: false, type: FileType.any);
+                      final result = await FilePicker.platform
+                          .pickFiles(allowMultiple: false, type: FileType.any);
                       if (result == null) {
                         ScaffoldMessenger.of(context).showSnackBar(
                           SnackBar(
@@ -143,7 +143,8 @@ class _AdminRegState extends State<AdminReg> {
                             .ref('documents/$fileName')
                             .getDownloadURL()
                             .then((imageUrl) {
-                          CollectionReference collref = FirebaseFirestore.instance.collection("Alumni");
+                          CollectionReference collref =
+                              FirebaseFirestore.instance.collection("Alumni");
                           collref.add({
                             "Fullname": secondEditingController.text,
                             "emailField": emailEditingController.text,
@@ -169,7 +170,8 @@ class _AdminRegState extends State<AdminReg> {
                 ),
                 ElevatedButton(
                   onPressed: () {
-                    CollectionReference collref = FirebaseFirestore.instance.collection("Alumni");
+                    CollectionReference collref =
+                        FirebaseFirestore.instance.collection("Alumni");
                     collref.add({
                       "Fullname": secondEditingController.text,
                       "emailField": emailEditingController.text,

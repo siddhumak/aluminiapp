@@ -1,8 +1,14 @@
 import 'dart:io';
+<<<<<<< HEAD
 import 'package:demoapp/components/drawer_screen.dart';
 import 'package:demoapp/screens/admregister_screen.dart';
 import 'package:demoapp/screens/chat_screen.dart';
 import 'package:demoapp/screens/job_form.dart';
+=======
+import 'package:demoapp/screens/add_post_screen.dart';
+import 'package:demoapp/screens/admregister_screen.dart';
+import 'package:demoapp/screens/homescreen.dart';
+>>>>>>> 030ce7e4671bac2a0cd5b8caf973a4f915502365
 import 'package:demoapp/screens/login_screen.dart';
 import 'package:demoapp/onboarding_screen/onboarding_screen.dart';
 import 'package:demoapp/screens/office_auth.dart';
@@ -15,26 +21,28 @@ import 'package:flutter/material.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  Platform.isAndroid
-      ? await Firebase.initializeApp(
-          options: const FirebaseOptions(
-          apiKey: 'AIzaSyB5ocmM6k9zVb2vMSgX4Ak0SjQ2ZkURJGk',
-          appId: '1:1047257889188:android:830dd53a288ac9d9e86931',
-          messagingSenderId: '1047257889188',
-          projectId: 'demoapp-4f587',
-          storageBucket: "demoapp-4f587.appspot.com",
-        ))
-      : await Firebase.initializeApp();
+
+  // Initialize Firebase
+  if (Platform.isAndroid) {
+    await Firebase.initializeApp(
+      options: FirebaseOptions(
+        apiKey: 'AIzaSyB5ocmM6k9zVb2vMSgX4Ak0SjQ2ZkURJGk',
+        appId: '1:1047257889188:android:830dd53a288ac9d9e86931',
+        messagingSenderId: '1047257889188',
+        projectId: 'demoapp-4f587',
+        storageBucket: 'demoapp-4f587.appspot.com',
+      ),
+    );
+  } else if (Platform.isIOS) {
+    await Firebase.initializeApp();
+  }
 
   runApp(const MyApp());
-
-  
 }
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -45,7 +53,11 @@ class MyApp extends StatelessWidget {
             ColorScheme.fromSeed(seedColor: Color.fromARGB(255, 1, 27, 69)),
         useMaterial3: true,
       ),
+<<<<<<< HEAD
       home: SendSMSPage(),
+=======
+      home: HomeScreen(),
+>>>>>>> 030ce7e4671bac2a0cd5b8caf973a4f915502365
     );
   }
 }

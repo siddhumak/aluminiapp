@@ -1,3 +1,4 @@
+import 'package:demoapp/screens/add_post_screen.dart';
 import 'package:demoapp/screens/home_screen.dart';
 import 'package:demoapp/screens/homescreen.dart';
 import 'package:demoapp/screens/registration_screen.dart';
@@ -177,7 +178,7 @@ class _LoginScreenState extends State<LoginScreen> {
           .then((uid) => {
                 Fluttertoast.showToast(msg: "Login Successful"),
                 Navigator.of(context).pushReplacement(
-                    MaterialPageRoute(builder: (context) => HomeScreen()))
+                    MaterialPageRoute(builder: (context) => AddPostScreen()))
               })
           .catchError((e) {
         Fluttertoast.showToast(msg: e!.message);

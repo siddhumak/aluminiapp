@@ -41,12 +41,25 @@ dependencies:
   fluttertoast: ^8.2.4
   flutter_native_splash: ^2.3.10
   flutter_spinkit: ^5.2.0
+<<<<<<< HEAD
   file_picker: ^4.0.6
   firebase_storage: any
   url_launcher: any
   permission_handler: ^11.3.0
 
   
+=======
+  provider: ^6.1.2
+  image_picker: ^1.0.7
+  file_picker: ^6.2.0
+  firebase_storage: ^11.6.9
+  reference: ^0.2.0-beta.4
+  firebase_database: ^10.4.9
+  intl: ^0.19.0
+  modal_progress_hud_nsn: ^0.5.1
+  persistent_bottom_nav_bar: ^5.0.2
+  floating_bottom_bar: ^0.0.3
+>>>>>>> 030ce7e4671bac2a0cd5b8caf973a4f915502365
 
 dev_dependencies:
   flutter_test:
