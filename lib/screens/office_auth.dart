@@ -1,3 +1,7 @@
+
+import 'package:demoapp/model/post.dart';
+import 'package:demoapp/screens/homescreen.dart';
+import 'package:demoapp/screens/sms.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
@@ -51,6 +55,24 @@ class OfficeAuth extends StatelessWidget {
                               ],
                             ),
                           ),
+
+
+                          ElevatedButton(
+                            onPressed:  () {
+                                      String email=alumniData["emailField"];
+
+                                      String username2=alumniData["Fullname"] ;
+                              Navigator.push(
+
+                                context,
+                                 MaterialPageRoute(builder: (context)=>SendMail(
+                                  data: email,
+                                  data2:username2,
+                                  
+                                  )));
+                              
+                            },
+                             child: Text("verify"))
                           // Add more widgets to display other alumni details
                         ],
                       ),

@@ -1,27 +1,28 @@
 import 'package:demoapp/screens/add_post_screen.dart';
 import 'package:demoapp/screens/home_screen.dart';
 import 'package:demoapp/screens/homescreen.dart';
+import 'package:demoapp/screens/office_auth.dart';
 import 'package:demoapp/screens/registration_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
 class LoginScreen extends StatefulWidget {
-  const LoginScreen({super.key});
+  const LoginScreen({Key? key}) : super(key: key);
 
   @override
   State<LoginScreen> createState() => _LoginScreenState();
 }
 
 class _LoginScreenState extends State<LoginScreen> {
-//form key
+  //form key
   final _formKey = GlobalKey<FormState>();
 
-//editing controller
-  final TextEditingController emailController = new TextEditingController();
-  final TextEditingController passwordController = new TextEditingController();
+  //editing controller
+  final TextEditingController emailController = TextEditingController();
+  final TextEditingController passwordController = TextEditingController();
 
-//firebase
+  //firebase
   final _auth = FirebaseAuth.instance;
 
   @override
@@ -48,8 +49,8 @@ class _LoginScreenState extends State<LoginScreen> {
         },
         textInputAction: TextInputAction.next,
         decoration: InputDecoration(
-          prefixIcon: Icon(Icons.mail),
-          contentPadding: EdgeInsets.fromLTRB(20, 15, 20, 15),
+          prefixIcon: const Icon(Icons.mail),
+          contentPadding: const EdgeInsets.fromLTRB(20, 15, 20, 15),
           hintText: "Email",
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(10),
@@ -62,39 +63,40 @@ class _LoginScreenState extends State<LoginScreen> {
         controller: passwordController,
         obscureText: true,
         validator: (value) {
-          RegExp regex = new RegExp(r'^.{6,}$');
+          RegExp regex = RegExp(r'^.{6,}$');
           if (value!.isEmpty) {
             return ("Password is required for login");
           }
           if (!regex.hasMatch(value)) {
             return ("Please Enter Valid Password(Min. 6 Character)");
           }
+          return null;
         },
         onSaved: (value) {
           passwordController.text = value!;
         },
         textInputAction: TextInputAction.done,
         decoration: InputDecoration(
-          prefixIcon: Icon(Icons.vpn_key),
-          contentPadding: EdgeInsets.fromLTRB(20, 15, 20, 15),
+          prefixIcon: const Icon(Icons.vpn_key),
+          contentPadding: const EdgeInsets.fromLTRB(20, 15, 20, 15),
           hintText: "Password",
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(10),
           ),
         ));
 
-    //Login Buttton
+    //Login Button
     final LoginButton = Material(
       elevation: 5,
       borderRadius: BorderRadius.circular(30),
       color: Colors.redAccent,
       child: MaterialButton(
-        padding: EdgeInsets.fromLTRB(20, 15, 20, 15),
+        padding: const EdgeInsets.fromLTRB(20, 15, 20, 15),
         minWidth: MediaQuery.of(context).size.width,
         onPressed: () {
           signIn(emailController.text, passwordController.text);
         },
-        child: Text(
+        child: const Text(
           "Login",
           textAlign: TextAlign.center,
           style: TextStyle(
@@ -124,25 +126,25 @@ class _LoginScreenState extends State<LoginScreen> {
                           fit: BoxFit.contain,
                         ),
                       ),
-                      SizedBox(
+                      const SizedBox(
                         height: 45,
                       ),
                       emailField,
-                      SizedBox(
+                      const SizedBox(
                         height: 25,
                       ),
                       passwordField,
-                      SizedBox(
+                      const SizedBox(
                         height: 35,
                       ),
                       LoginButton,
-                      SizedBox(
+                      const SizedBox(
                         height: 15,
                       ),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: <Widget>[
-                          Text("Don't have an account? "),
+                          const Text("Don't have an account? "),
                           GestureDetector(
                             onTap: () {
                               Navigator.push(
@@ -151,7 +153,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                       builder: (context) =>
                                           RegistrationScreen()));
                             },
-                            child: Text(
+                            child: const Text(
                               "SignUp",
                               style: TextStyle(
                                   color: Colors.redAccent,
@@ -173,16 +175,24 @@ class _LoginScreenState extends State<LoginScreen> {
   //login function
   void signIn(String email, String password) async {
     if (_formKey.currentState!.validate()) {
-      await _auth
-          .signInWithEmailAndPassword(email: email, password: password)
-          .then((uid) => {
-                Fluttertoast.showToast(msg: "Login Successful"),
-                Navigator.of(context).pushReplacement(
-                    MaterialPageRoute(builder: (context) => AddPostScreen()))
-              })
-          .catchError((e) {
-        Fluttertoast.showToast(msg: e!.message);
-      });
+      // Check if entered email and password match the default credentials
+      if (email == "default@example.com" && password == "password123") {
+        // Navigate to the office authentication page
+        Navigator.of(context).pushReplacement(
+            MaterialPageRoute(builder: (context) => OfficeAuth()));
+      } else {
+        // If not default credentials, proceed with Firebase authentication
+        await _auth
+            .signInWithEmailAndPassword(email: email, password: password)
+            .then((uid) => {
+                  Fluttertoast.showToast(msg: "Login Successful"),
+                  Navigator.of(context).pushReplacement(
+                      MaterialPageRoute(builder: (context) => AddPostScreen()))
+                })
+            .catchError((e) {
+          Fluttertoast.showToast(msg: e!.message.toString());
+        });
+      }
     }
   }
 }

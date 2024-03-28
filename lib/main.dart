@@ -1,14 +1,7 @@
 import 'dart:io';
-<<<<<<< HEAD
-import 'package:demoapp/components/drawer_screen.dart';
-import 'package:demoapp/screens/admregister_screen.dart';
-import 'package:demoapp/screens/chat_screen.dart';
-import 'package:demoapp/screens/job_form.dart';
-=======
 import 'package:demoapp/screens/add_post_screen.dart';
 import 'package:demoapp/screens/admregister_screen.dart';
 import 'package:demoapp/screens/homescreen.dart';
->>>>>>> 030ce7e4671bac2a0cd5b8caf973a4f915502365
 import 'package:demoapp/screens/login_screen.dart';
 import 'package:demoapp/onboarding_screen/onboarding_screen.dart';
 import 'package:demoapp/screens/office_auth.dart';
@@ -53,11 +46,7 @@ class MyApp extends StatelessWidget {
             ColorScheme.fromSeed(seedColor: Color.fromARGB(255, 1, 27, 69)),
         useMaterial3: true,
       ),
-<<<<<<< HEAD
-      home: SendSMSPage(),
-=======
-      home: HomeScreen(),
->>>>>>> 030ce7e4671bac2a0cd5b8caf973a4f915502365
+      home: LoginScreen(),
     );
   }
 }
