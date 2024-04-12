@@ -12,7 +12,7 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:modal_progress_hud_nsn/modal_progress_hud_nsn.dart';
 
 class AddPostScreen extends StatefulWidget {
-  const AddPostScreen({super.key});
+  const AddPostScreen({Key? key}) : super(key: key);
 
   @override
   State<AddPostScreen> createState() => _AddPostScreenState();
@@ -20,9 +20,10 @@ class AddPostScreen extends StatefulWidget {
 
 class _AddPostScreenState extends State<AddPostScreen> {
   bool showSpinner = false;
-  final postRef = FirebaseDatabase.instance.ref().child('Posts');
-  firebase_storage.FirebaseStorage storage =
-      firebase_storage.FirebaseStorage.instance;
+  final DatabaseReference postRef =
+      FirebaseDatabase.instance.ref().child('Posts');
+  final CollectionReference postsCollection =
+      FirebaseFirestore.instance.collection('posts');
 
   FirebaseAuth _auth = FirebaseAuth.instance;
 
@@ -97,7 +98,7 @@ class _AddPostScreenState extends State<AddPostScreen> {
       inAsyncCall: showSpinner,
       child: Scaffold(
         appBar: AppBar(
-          title: Text('upload Feeds', style: TextStyle(color: Colors.white)),
+          title: Text('Upload Feeds', style: TextStyle(color: Colors.white)),
           backgroundColor: Color.fromARGB(255, 1, 27, 69),
           centerTitle: true,
         ),
@@ -215,7 +216,7 @@ class _AddPostScreenState extends State<AddPostScreen> {
                           final profileUrl = userData[
                               'profile']; // Adjust field name as per your Firestore structure
 
-                          // Write post data to real-time database
+                          // Write post data to Realtime Database
                           await postRef
                               .child('Post List')
                               .child(date.toString())
@@ -227,9 +228,17 @@ class _AddPostScreenState extends State<AddPostScreen> {
                             'pDescription':
                                 descriptionController.text.toString(),
                             'uEmail': user.email.toString(),
-                            'Uid': user.uid.toString(),
-                            'profileUrl':
-                                profileUrl, // Add profile URL to the post data
+                            'Uid': user.uid
+                                .toString(), // Store UID in Realtime Database
+                            'profileUrl': profileUrl,
+                          });
+
+// Store post ID and UID in Firestore
+                          await postsCollection.doc(date.toString()).set({
+                            'postId': date.toString(),
+                            'uid':
+                                user.uid.toString(), // Store UID in Firestore
+                            'likes': [], // Initialize likes array for the post
                           });
                         }
                       }

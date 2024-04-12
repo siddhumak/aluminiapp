@@ -1,8 +1,11 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:demoapp/components/drawer_screen.dart';
+import 'package:demoapp/components/like_button.dart';
+import 'package:demoapp/model/user_model.dart';
 import 'package:demoapp/screens/Profile_Screen.dart';
 import 'package:demoapp/screens/add_post_screen.dart';
 import 'package:demoapp/screens/login_screen.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_database/ui/firebase_animated_list.dart';
 import 'package:flutter/material.dart';
@@ -10,7 +13,7 @@ import 'package:floating_bottom_bar/animated_bottom_navigation_bar.dart';
 import 'package:provider/provider.dart';
 
 class HomeScreen extends StatefulWidget {
-  const HomeScreen({super.key});
+  const HomeScreen({Key? key});
 
   @override
   State<HomeScreen> createState() => _HomeScreenState();
@@ -18,6 +21,18 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   final dbRef = FirebaseDatabase.instance.ref().child('Posts');
+  User? user = FirebaseAuth.instance.currentUser;
+  UserModel loggedInUser = UserModel();
+
+  // Function to update likes in Firestore
+  Future<void> updateLikes(String postId, List<String> likes) async {
+    await FirebaseFirestore.instance
+        .collection("posts") // Assuming the collection name is 'posts'
+        .doc(postId) // Use the postId to target the specific document
+        .update({
+      'likes': [],
+    }); // Update the 'likes' field for the specific document
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -65,7 +80,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                     onTap: () {
                                       Navigator.of(context).push(
                                           MaterialPageRoute(
-                                              builder: (Context) =>
+                                              builder: (context) =>
                                                   ProfileScreen()));
                                     },
                                     child: Container(
@@ -129,6 +144,66 @@ class _HomeScreenState extends State<HomeScreen> {
                               style: TextStyle(
                                   fontSize: 15, fontWeight: FontWeight.normal),
                             ),
+                          ),
+                          SizedBox(
+                            height: 10,
+                          ),
+                          Row(
+                            children: [
+                              StreamBuilder<DocumentSnapshot>(
+                                stream: FirebaseFirestore.instance
+                                    .collection('posts')
+                                    .doc(user!.uid)
+                                    .snapshots(),
+                                builder: (context, snapshot) {
+                                  if (!snapshot.hasData) {
+                                    return CircularProgressIndicator();
+                                  }
+
+                                  var postData = snapshot.data!.data() as Map?;
+                                  var likes = List<String>.from(
+                                      postData?['likes'] ?? []);
+                                  var postId =
+                                      snapshot.data!.id; // Get the post ID
+
+                                  return FutureBuilder<void>(
+                                    future: null,
+                                    builder: (context, snapshot) {
+                                      return LikeButton(
+                                        isLiked: likes.contains(
+                                            postId), // Check if post is liked
+                                        onTap: () async {
+                                          setState(() {
+                                            if (likes.contains(postId)) {
+                                              likes.remove(
+                                                  postId); // Remove like if already liked
+                                            } else {
+                                              likes.add(
+                                                  postId); // Add like if not already liked
+                                            }
+                                          });
+                                          try {
+                                            await updateLikes(postId,
+                                                likes); // Update likes for this post
+                                          } catch (e) {
+                                            print("Error updating likes: $e");
+                                            setState(() {
+                                              // Revert back the changes if update fails
+                                              if (likes.contains(postId)) {
+                                                likes.remove(postId);
+                                              } else {
+                                                likes.add(postId);
+                                              }
+                                            });
+                                          }
+                                        },
+                                        likeCount: likes.length,
+                                      );
+                                    },
+                                  );
+                                },
+                              ),
+                            ],
                           ),
                         ],
                       ),

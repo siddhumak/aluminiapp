@@ -1,4 +1,8 @@
 import 'dart:io';
+<<<<<<< Updated upstream
+=======
+import 'package:demoapp/onboarding_screen/onboarding_screen1.dart';
+>>>>>>> Stashed changes
 import 'package:demoapp/screens/add_post_screen.dart';
 import 'package:demoapp/screens/admregister_screen.dart';
 import 'package:demoapp/screens/homescreen.dart';
@@ -10,7 +14,6 @@ import 'package:demoapp/screens/splash_screen.dart';
 import 'package:demoapp/screens/view_job.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -46,7 +49,11 @@ class MyApp extends StatelessWidget {
             ColorScheme.fromSeed(seedColor: Color.fromARGB(255, 1, 27, 69)),
         useMaterial3: true,
       ),
+<<<<<<< Updated upstream
       home: LoginScreen(),
+=======
+      home: HomeScreen(),
+>>>>>>> Stashed changes
     );
   }
 }

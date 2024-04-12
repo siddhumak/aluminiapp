@@ -1,71 +1,94 @@
-import 'package:demoapp/onboarding_screen/onboarding_screen.dart';
-import 'package:demoapp/screens/home_screen.dart';
-import 'package:demoapp/screens/login_screen.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_spinkit/flutter_spinkit.dart';
 
 class SplashScreen extends StatefulWidget {
-  const SplashScreen({super.key});
+  const SplashScreen({Key? key}) : super(key: key);
 
   @override
   State<SplashScreen> createState() => _SplashScreenState();
 }
 
 class _SplashScreenState extends State<SplashScreen>
-    with SingleTickerProviderStateMixin {
-  late AnimationController animationController;
-  late Animation animation;
+    with TickerProviderStateMixin {
+  late AnimationController controller;
+  late Animation<double> animation;
+
   @override
   void initState() {
-    animationController =
-        AnimationController(vsync: this, duration: const Duration(seconds: 2));
-    animation =
-        CurvedAnimation(parent: animationController, curve: Curves.easeInOut);
-    animation.addListener(() {
-      if (mounted) {
-        setState(() {});
-      }
-    });
-    animationController.forward();
-    Future.delayed(const Duration(seconds: 3)).then((value) {
-      Navigator.of(context).pushReplacement(
-          MaterialPageRoute(builder: (context) => OnboardingScreen()));
-    });
-
     super.initState();
+    controller = AnimationController(
+      vsync: this,
+      duration: Duration(seconds: 3),
+    );
+
+    animation = CurvedAnimation(
+      parent: controller,
+      curve: Curves.easeIn, // Apply ease in curve
+    );
+
+    controller.forward(); // Start the animation in the forward direction
   }
 
   @override
   void dispose() {
-    animationController.dispose();
+    controller.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    final size = MediaQuery.of(context).size;
     return Scaffold(
-      body: SizedBox(
-        height: size.height,
-        width: size.width,
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Image(
-              image: AssetImage("assets/loginimg.png"),
-              height: animation.value * 200,
+      body: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Center(
+            child: AnimatedBuilder(
+              animation: animation,
+              builder: (context, child) {
+                return SizedBox(
+                  height: 300,
+                  width: 300,
+                  child: Stack(
+                    alignment: Alignment.center,
+                    children: [
+                      // Wheel image
+                      Transform.rotate(
+                        angle: animation.value * 2 * 3.14, // Rotate the wheel
+                        child: SizedBox(
+                          height: 90,
+                          width: 100,
+                          child: Image.asset('assets/earth.png'),
+                        ),
+                      ),
+                      // People image
+                      Positioned(
+                        top: 75, // Half of the people.png image's height
+                        child: Transform.translate(
+                          offset:
+                              Offset(2, -47), // Adjust the position as needed
+                          child: SizedBox(
+                            height: 210,
+                            width: 210,
+                            child: Image.asset('assets/people.png'),
+                          ),
+                        ),
+                      ),
+                      // Additional image below people.png
+                      Positioned(
+                        top:
+                            210, // Adjust position based on people image's height
+                        child: SizedBox(
+                          height: 100,
+                          width: 100,
+                          child: Image.asset('assets/name.png'),
+                        ),
+                      ),
+                    ],
+                  ),
+                );
+              },
             ),
-            SizedBox(
-              height: 50,
-            ),
-            SpinKitFadingCircle(
-              color: Color.fromARGB(255, 0, 123, 247),
-              size: 50.0,
-            ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }

@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+<<<<<<< Updated upstream
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:mailer/mailer.dart';
 import 'package:mailer/smtp_server/gmail.dart';
@@ -9,6 +10,10 @@ class SendMail extends StatefulWidget {
   final String data2;
 
   SendMail({required this.data, required this.data2});
+=======
+import 'package:permission_handler/permission_handler.dart'; // Added for permission handling
+import 'package:url_launcher/url_launcher.dart';
+>>>>>>> Stashed changes
 
   @override
   State<SendMail> createState() => _SendMailState();
