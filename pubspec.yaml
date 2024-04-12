@@ -53,14 +53,11 @@ dependencies:
   floating_bottom_bar: ^0.0.3
   permission_handler: ^11.3.0
   url_launcher: ^6.2.5
-<<<<<<< Updated upstream
-  mailer: ^6.1.0
-=======
   firebase_app_check: ^0.2.1+17
   liquid_swipe: ^3.1.0
   smooth_page_indicator: ^1.1.0
+  mailer: ^6.1.0
 
->>>>>>> Stashed changes
 
 dev_dependencies:
   flutter_test:

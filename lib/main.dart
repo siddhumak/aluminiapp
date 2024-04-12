@@ -1,9 +1,4 @@
 import 'dart:io';
-<<<<<<< Updated upstream
-=======
-import 'package:demoapp/onboarding_screen/onboarding_screen1.dart';
->>>>>>> Stashed changes
-import 'package:demoapp/screens/add_post_screen.dart';
 import 'package:demoapp/screens/admregister_screen.dart';
 import 'package:demoapp/screens/homescreen.dart';
 import 'package:demoapp/screens/login_screen.dart';
@@ -49,11 +44,7 @@ class MyApp extends StatelessWidget {
             ColorScheme.fromSeed(seedColor: Color.fromARGB(255, 1, 27, 69)),
         useMaterial3: true,
       ),
-<<<<<<< Updated upstream
-      home: LoginScreen(),
-=======
       home: HomeScreen(),
->>>>>>> Stashed changes
     );
   }
 }
