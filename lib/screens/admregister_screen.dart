@@ -1,5 +1,3 @@
-import 'dart:ffi';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
@@ -17,6 +15,7 @@ class AdminReg extends StatefulWidget {
 }
 
 class _AdminRegState extends State<AdminReg> {
+  final TextEditingController firstEditingController = TextEditingController();
   final TextEditingController secondEditingController = TextEditingController();
   final TextEditingController emailEditingController = TextEditingController();
   final TextEditingController phonenoController = TextEditingController();
@@ -66,13 +65,26 @@ class _AdminRegState extends State<AdminReg> {
                   ),
                 ),
                 TextFormField(
+                  controller: firstEditingController,
+                  autofocus: false,
+                  keyboardType: TextInputType.name,
+                  decoration: InputDecoration(
+                    prefixIcon: Icon(Icons.account_circle),
+                    contentPadding: EdgeInsets.fromLTRB(20, 15, 20, 15),
+                    hintText: "First Name",
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                  ),
+                ),
+                TextFormField(
                   controller: secondEditingController,
                   autofocus: false,
                   keyboardType: TextInputType.name,
                   decoration: InputDecoration(
                     prefixIcon: Icon(Icons.account_circle),
                     contentPadding: EdgeInsets.fromLTRB(20, 15, 20, 15),
-                    hintText: "Full Name",
+                    hintText: "Last Name",
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(10),
                     ),
@@ -146,17 +158,21 @@ class _AdminRegState extends State<AdminReg> {
                           CollectionReference collref =
                               FirebaseFirestore.instance.collection("Alumni");
                           collref.add({
-                            "Fullname": secondEditingController.text,
-                            "emailField": emailEditingController.text,
+                            "firstName": firstEditingController.text,
+                            "secondName": secondEditingController.text,
+                            "email": emailEditingController.text,
                             "phoneno": phonenoController.text,
                             'passout': _dateController.text,
                             'imageUrl': imageUrl,
-                          }).then((_){
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(content: Text('Data Submitted Successfully'),),
-                            );
-
-                          },);
+                          }).then(
+                            (_) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  content: Text('Data Submitted Successfully'),
+                                ),
+                              );
+                            },
+                          );
 
                           secondEditingController.clear();
                           emailEditingController.clear();
@@ -172,12 +188,7 @@ class _AdminRegState extends State<AdminReg> {
                   onPressed: () {
                     CollectionReference collref =
                         FirebaseFirestore.instance.collection("Alumni");
-                    collref.add({
-                      "Fullname": secondEditingController.text,
-                      "emailField": emailEditingController.text,
-                      "phoneno": phonenoController.text,
-                      'passout': _dateController.text,
-                    });
+                    collref.add({});
                   },
                   child: Text("Submit"),
                 ),

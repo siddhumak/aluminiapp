@@ -1,15 +1,25 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:intl/intl.dart';
 
-class JobListPage extends StatelessWidget {
+class JobListPage extends StatefulWidget {
+  @override
+  State<JobListPage> createState() => _JobListPageState();
+}
+
+class _JobListPageState extends State<JobListPage> {
+  User? user = FirebaseAuth.instance.currentUser;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text('Job Postings'),
+        backgroundColor: Color.fromARGB(255, 59, 196, 126),
       ),
       body: StreamBuilder(
-        stream: FirebaseFirestore.instance.collection('job').snapshots(),
+        stream: FirebaseFirestore.instance.collection('Job').snapshots(),
         builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return Center(
@@ -24,44 +34,127 @@ class JobListPage extends StatelessWidget {
           }
 
           if (snapshot.hasData && snapshot.data!.docs.isNotEmpty) {
+            var validJobPostings = snapshot.data!.docs.where((job) {
+              var deadlineTimestamp =
+                  (job.data() as Map<String, dynamic>)['deadline'] as Timestamp;
+              var deadline = deadlineTimestamp.toDate();
+              return deadline.isAfter(DateTime.now());
+            }).toList();
+
+            if (validJobPostings.isEmpty) {
+              return Center(
+                child: Text('No job postings found.'),
+              );
+            }
+
             return ListView.builder(
-              itemCount: snapshot.data!.docs.length,
+              itemCount: validJobPostings.length,
               itemBuilder: (context, index) {
-                var jobData = snapshot.data!.docs[index].data() as Map<String, dynamic>;
-                Color titleColor = index % 2 == 0 ? Colors.blue : Colors.green; // Example: alternate colors
+                var jobData =
+                    validJobPostings[index].data() as Map<String, dynamic>;
 
                 return Card(
-                  elevation: 2,
-                  margin: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                  child: ListTile(
-                    title: Container(
-                      color: titleColor,
-                      padding: EdgeInsets.all(8),
-                      child: Text(
-                        jobData['job_title'],
-                        style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+                  elevation: 4,
+                  margin: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      ClipRRect(
+                        borderRadius:
+                            BorderRadius.vertical(top: Radius.circular(10)),
+                        child: Image.asset(
+                          "assets/job.jpg",
+                          height: 100,
+                          width: double.infinity,
+                          fit: BoxFit.cover,
+                        ),
                       ),
-                    ),
-                    subtitle: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        SizedBox(height: 8),
-                        Text('Description: ${jobData['job_description']}'),
-                        SizedBox(height: 4),
-                        Text('Location: ${jobData['location']}'),
-                        SizedBox(height: 4),
-                        Text('Qualification: ${jobData['qualification']}'),
-                        SizedBox(height: 4),
-                        Text('Salary: ${jobData['salary']}'),
-                        SizedBox(height: 8),
-                        Text('Deadline:${jobData['deadline']}'),
-                        SizedBox(height: 8),
-                        Text('Contact:${jobData['contact']}')
-                      ],
-                    ),
-                    onTap: () {
-                      // You can add navigation logic here if needed
-                    },
+                      Padding(
+                        padding: EdgeInsets.all(16),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              '${jobData['job_title']}',
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 20,
+                                color: Colors.blueAccent,
+                              ),
+                            ),
+                            SizedBox(height: 8),
+                            Row(
+                              children: [
+                                Icon(Icons.person, color: Colors.grey),
+                                SizedBox(width: 8),
+                                Text(
+                                  'Posted by: ${jobData['username']}',
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ],
+                            ),
+                            SizedBox(height: 8),
+                            Text(
+                              'Description:',
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                decoration: TextDecoration.underline,
+                              ),
+                            ),
+                            Text('${jobData['job_description']}'),
+                            SizedBox(height: 8),
+                            Row(
+                              children: [
+                                Icon(Icons.location_on, color: Colors.grey),
+                                SizedBox(width: 8),
+                                Text('${jobData['location']}'),
+                              ],
+                            ),
+                            SizedBox(height: 8),
+                            Row(
+                              children: [
+                                Icon(Icons.school, color: Colors.grey),
+                                SizedBox(width: 8),
+                                Text('${jobData['qualification']}'),
+                              ],
+                            ),
+                            SizedBox(height: 8),
+                            Row(
+                              children: [
+                                Icon(Icons.money, color: Colors.grey),
+                                SizedBox(width: 8),
+                                Text('${jobData['salary']}'),
+                              ],
+                            ),
+                            SizedBox(height: 8),
+                            Row(
+                              children: [
+                                Icon(Icons.phone, color: Colors.grey),
+                                SizedBox(width: 8),
+                                Text('${jobData['contact']}'),
+                              ],
+                            ),
+                            SizedBox(height: 8),
+                            Row(
+                              children: [
+                                Icon(Icons.calendar_today,
+                                    color: Colors.redAccent),
+                                SizedBox(width: 8),
+                                Text(
+                                  'Deadline: ${DateFormat('yyyy-MM-dd').format(jobData['deadline'].toDate())}',
+                                  style: TextStyle(color: Colors.redAccent),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
                   ),
                 );
               },
@@ -75,4 +168,11 @@ class JobListPage extends StatelessWidget {
       ),
     );
   }
+}
+
+void main() {
+  runApp(MaterialApp(
+    title: 'Job Listings',
+    home: JobListPage(),
+  ));
 }

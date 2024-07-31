@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:demoapp/components/roundbutton.dart';
 import 'package:demoapp/model/user_model.dart';
+import 'package:demoapp/screens/homescreen.dart';
 import 'package:demoapp/screens/login_screen.dart';
 import 'package:demoapp/screens/profile_controller.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -53,6 +54,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
               child: StreamBuilder(
                 stream:
                     FirebaseFirestore.instance.collection('users').snapshots(),
+                // user.userData!['userType'] == "alumni" ? 'Alumni' : 'users').snapshots(),
+
                 builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting) {
                     return Center(child: CircularProgressIndicator());
@@ -152,13 +155,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               height: 40,
                             ),
                             RoundButton(
-                              title: 'Logout',
+                              title: 'Save',
                               onPress: () async {
                                 auth.signOut().then((value) {
                                   Navigator.push(
                                       context,
                                       MaterialPageRoute(
-                                          builder: (context) => LoginScreen()));
+                                          builder: (context) => HomeScreen()));
                                 });
                               },
                             ),

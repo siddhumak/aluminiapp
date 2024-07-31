@@ -1,11 +1,13 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:demoapp/components/colors.dart';
 import 'package:demoapp/components/drawer_screen.dart';
-import 'package:demoapp/components/like_button.dart';
-import 'package:demoapp/model/user_model.dart';
 import 'package:demoapp/screens/Profile_Screen.dart';
 import 'package:demoapp/screens/add_post_screen.dart';
+import 'package:demoapp/screens/chat_screen.dart';
+import 'package:demoapp/screens/job_form.dart';
 import 'package:demoapp/screens/login_screen.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:demoapp/screens/updatescreen.dart';
+import 'package:demoapp/screens/view_job.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_database/ui/firebase_animated_list.dart';
 import 'package:flutter/material.dart';
@@ -13,7 +15,7 @@ import 'package:floating_bottom_bar/animated_bottom_navigation_bar.dart';
 import 'package:provider/provider.dart';
 
 class HomeScreen extends StatefulWidget {
-  const HomeScreen({Key? key});
+  const HomeScreen({super.key});
 
   @override
   State<HomeScreen> createState() => _HomeScreenState();
@@ -21,24 +23,19 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   final dbRef = FirebaseDatabase.instance.ref().child('Posts');
-  User? user = FirebaseAuth.instance.currentUser;
-  UserModel loggedInUser = UserModel();
-
-  // Function to update likes in Firestore
-  Future<void> updateLikes(String postId, List<String> likes) async {
-    await FirebaseFirestore.instance
-        .collection("posts") // Assuming the collection name is 'posts'
-        .doc(postId) // Use the postId to target the specific document
-        .update({
-      'likes': [],
-    }); // Update the 'likes' field for the specific document
-  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Color.fromARGB(255, 1, 27, 69),
+        backgroundColor: primarycolor,
+        title: Text(
+          'Feeds',
+          style: TextStyle(
+            color: Colors.white,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
         iconTheme: IconThemeData(color: Colors.white),
       ),
       drawer: MyDrawer(),
@@ -80,7 +77,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                     onTap: () {
                                       Navigator.of(context).push(
                                           MaterialPageRoute(
-                                              builder: (context) =>
+                                              builder: (Context) =>
                                                   ProfileScreen()));
                                     },
                                     child: Container(
@@ -145,66 +142,6 @@ class _HomeScreenState extends State<HomeScreen> {
                                   fontSize: 15, fontWeight: FontWeight.normal),
                             ),
                           ),
-                          SizedBox(
-                            height: 10,
-                          ),
-                          Row(
-                            children: [
-                              StreamBuilder<DocumentSnapshot>(
-                                stream: FirebaseFirestore.instance
-                                    .collection('posts')
-                                    .doc(user!.uid)
-                                    .snapshots(),
-                                builder: (context, snapshot) {
-                                  if (!snapshot.hasData) {
-                                    return CircularProgressIndicator();
-                                  }
-
-                                  var postData = snapshot.data!.data() as Map?;
-                                  var likes = List<String>.from(
-                                      postData?['likes'] ?? []);
-                                  var postId =
-                                      snapshot.data!.id; // Get the post ID
-
-                                  return FutureBuilder<void>(
-                                    future: null,
-                                    builder: (context, snapshot) {
-                                      return LikeButton(
-                                        isLiked: likes.contains(
-                                            postId), // Check if post is liked
-                                        onTap: () async {
-                                          setState(() {
-                                            if (likes.contains(postId)) {
-                                              likes.remove(
-                                                  postId); // Remove like if already liked
-                                            } else {
-                                              likes.add(
-                                                  postId); // Add like if not already liked
-                                            }
-                                          });
-                                          try {
-                                            await updateLikes(postId,
-                                                likes); // Update likes for this post
-                                          } catch (e) {
-                                            print("Error updating likes: $e");
-                                            setState(() {
-                                              // Revert back the changes if update fails
-                                              if (likes.contains(postId)) {
-                                                likes.remove(postId);
-                                              } else {
-                                                likes.add(postId);
-                                              }
-                                            });
-                                          }
-                                        },
-                                        likeCount: likes.length,
-                                      );
-                                    },
-                                  );
-                                },
-                              ),
-                            ],
-                          ),
                         ],
                       ),
                     ),
@@ -216,7 +153,7 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
       ),
       bottomNavigationBar: AnimatedBottomNavigationBar(
-        barColor: Colors.white,
+        barColor: fourthcolor,
         controller: FloatingBottomBarController(initialIndex: 1),
         bottomBar: [
           BottomBarItem(
@@ -224,45 +161,49 @@ class _HomeScreenState extends State<HomeScreen> {
               Icons.home,
               size: 30,
             ),
-            iconSelected: const Icon(Icons.home,
-                color: Color.fromARGB(255, 1, 27, 69), size: 30),
+            iconSelected: const Icon(Icons.home, color: primarycolor, size: 30),
             title: 'Home',
-            dotColor: Color.fromARGB(255, 1, 27, 69),
+            dotColor: primarycolor,
             onTap: (value) {
               Navigator.of(context)
                   .push(MaterialPageRoute(builder: (context) => HomeScreen()));
             },
           ),
           BottomBarItem(
-            icon: const Icon(Icons.person_search, size: 30),
-            iconSelected: const Icon(Icons.person_search,
-                color: Color.fromARGB(255, 1, 27, 69), size: 30),
-            title: 'Jobs',
-            dotColor: Color.fromARGB(255, 1, 27, 69),
-            onTap: (value) {},
-          ),
-          BottomBarItem(
-            icon: const Icon(Icons.person, size: 30),
-            iconSelected: const Icon(Icons.person,
-                color: Color.fromARGB(255, 1, 27, 69), size: 30),
-            title: 'person',
-            dotColor: Color.fromARGB(255, 1, 27, 69),
+            icon: const Icon(Icons.chat, size: 30),
+            iconSelected: const Icon(Icons.chat, color: primarycolor, size: 30),
+            title: 'Discussion',
+            dotColor: primarycolor,
             onTap: (value) {
-              Navigator.of(context).push(
-                  MaterialPageRoute(builder: (context) => ProfileScreen()));
+              Navigator.of(context)
+                  .push(MaterialPageRoute(builder: (context) => ChatScreen()));
             },
           ),
           BottomBarItem(
-            icon: const Icon(Icons.settings, size: 30),
-            iconSelected: const Icon(Icons.settings,
-                color: Color.fromARGB(255, 1, 27, 69), size: 30),
-            title: 'settings',
-            dotColor: Color.fromARGB(255, 1, 27, 69),
-            onTap: (value) {},
+            icon: const Icon(Icons.person_search, size: 30),
+            iconSelected:
+                const Icon(Icons.person_search, color: primarycolor, size: 30),
+            title: 'View Jobs',
+            dotColor: primarycolor,
+            onTap: (value) {
+              Navigator.of(context)
+                  .push(MaterialPageRoute(builder: (context) => JobListPage()));
+            },
+          ),
+          BottomBarItem(
+            icon: const Icon(Icons.notifications_on_rounded, size: 30),
+            iconSelected: const Icon(Icons.notifications_on_rounded,
+                color: primarycolor, size: 30),
+            title: 'Updates',
+            dotColor: primarycolor,
+            onTap: (value) {
+              Navigator.of(context).push(
+                  MaterialPageRoute(builder: (context) => UpdateScreen()));
+            },
           ),
         ],
         bottomBarCenterModel: BottomBarCenterModel(
-          centerBackgroundColor: Color.fromARGB(255, 1, 27, 69),
+          centerBackgroundColor: primarycolor,
           centerIcon: const FloatingCenterButton(
             child: Icon(
               Icons.add,
@@ -279,6 +220,144 @@ class _HomeScreenState extends State<HomeScreen> {
                   Navigator.of(context).push(
                       MaterialPageRoute(builder: (context) => AddPostScreen()));
                 }),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class RepostPage1 extends StatelessWidget {
+  final Map<dynamic, dynamic> post;
+
+  RepostPage1({required this.post});
+
+  @override
+  Widget build(BuildContext context) {
+    final TextEditingController titleController =
+        TextEditingController(text: post['pTitle']);
+    final TextEditingController descriptionController =
+        TextEditingController(text: post['pDescription']);
+
+    return Scaffold(
+      appBar: AppBar(
+        title: Text("Repost Page"),
+      ),
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            TextField(
+              controller: titleController,
+              decoration: InputDecoration(labelText: 'Title'),
+            ),
+            TextField(
+              controller: descriptionController,
+              decoration: InputDecoration(labelText: 'Description'),
+              maxLines: 3,
+            ),
+            SizedBox(height: 10),
+            Image.network(
+              post['pImage'],
+              fit: BoxFit.cover,
+              width: double.infinity,
+              height: 200,
+            ),
+            SizedBox(height: 20),
+            Center(
+              child: ElevatedButton(
+                onPressed: () {
+                  final newPost = {
+                    'pTitle': titleController.text,
+                    'pDescription': descriptionController.text,
+                    'pImage': post['pImage'],
+                    'profileUrl': post['profileUrl'],
+                    'uEmail': post['uEmail'],
+                    'isReposted': true,
+                  };
+                  FirebaseDatabase.instance
+                      .ref()
+                      .child('Posts')
+                      .child('Post List')
+                      .push()
+                      .set(newPost)
+                      .then((_) {
+                    Navigator.of(context).pop();
+                  });
+                },
+                child: Text("Repost"),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class Repost_Page extends StatelessWidget {
+  final Map<dynamic, dynamic> post;
+
+  Repost_Page({required this.post});
+
+  @override
+  Widget build(BuildContext context) {
+    final TextEditingController titleController =
+        TextEditingController(text: post['pTitle']);
+    final TextEditingController descriptionController =
+        TextEditingController(text: post['pDescription']);
+
+    return Scaffold(
+      appBar: AppBar(
+        title: Text("Repost Page"),
+      ),
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            TextField(
+              controller: titleController,
+              decoration: InputDecoration(labelText: 'Title'),
+            ),
+            TextField(
+              controller: descriptionController,
+              decoration: InputDecoration(labelText: 'Description'),
+              maxLines: 3,
+            ),
+            SizedBox(height: 10),
+            Image.network(
+              post['pImage'],
+              fit: BoxFit.cover,
+              width: double.infinity,
+              height: 200,
+            ),
+            SizedBox(height: 20),
+            Center(
+              child: ElevatedButton(
+                onPressed: () {
+                  final newPost = {
+                    'pTitle': titleController.text,
+                    'pDescription': descriptionController.text,
+                    'pImage': post['pImage'],
+                    'profileUrl': post['profileUrl'],
+                    'uEmail': post['uEmail'],
+                    'isReposted': true,
+                  };
+                  FirebaseDatabase.instance
+                      .ref()
+                      .child('Posts')
+                      .child('Post List')
+                      .push()
+                      .set(newPost)
+                      .then((_) {
+                    Navigator.of(context).pop();
+                  });
+                },
+                child: Text("Repost"),
+              ),
+            ),
           ],
         ),
       ),

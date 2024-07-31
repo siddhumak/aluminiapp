@@ -1,4 +1,6 @@
+import 'package:demoapp/components/colors.dart';
 import 'package:demoapp/screens/add_post_screen.dart';
+import 'package:demoapp/screens/admregister_screen.dart';
 import 'package:demoapp/screens/home_screen.dart';
 import 'package:demoapp/screens/homescreen.dart';
 import 'package:demoapp/screens/office_auth.dart';
@@ -28,7 +30,21 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     //email field
-    final emailField = TextFormField(
+    // Email Field
+    final emailField = Container(
+      decoration: BoxDecoration(
+        color: Colors.white, // Background color of the field
+        borderRadius: BorderRadius.circular(10), // Rounded corners
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey.withOpacity(0.5),
+            spreadRadius: 2,
+            blurRadius: 5,
+            offset: Offset(0, 3), // Shadow position
+          ),
+        ],
+      ),
+      child: TextFormField(
         controller: emailController,
         autofocus: false,
         keyboardType: TextInputType.emailAddress,
@@ -37,7 +53,7 @@ class _LoginScreenState extends State<LoginScreen> {
             return ("Please Enter Your Email");
           }
 
-          //reg expession for email validation
+          // Regular expression for email validation
           if (!RegExp("^[a-zA-Z0-9+_.-]+@[a-zA-Z0-9.-]+.[a-z]")
               .hasMatch(value)) {
             return ("Please Enter a valid email");
@@ -49,16 +65,48 @@ class _LoginScreenState extends State<LoginScreen> {
         },
         textInputAction: TextInputAction.next,
         decoration: InputDecoration(
-          prefixIcon: const Icon(Icons.mail),
-          contentPadding: const EdgeInsets.fromLTRB(20, 15, 20, 15),
+          prefixIcon: Icon(
+            Icons.mail,
+            color: primarycolor,
+          ),
+          contentPadding: EdgeInsets.fromLTRB(20, 15, 20, 15),
           hintText: "Email",
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(10),
+            borderSide: BorderSide
+                .none, // Remove the border to use the container's shadow
           ),
-        ));
+          enabledBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(10),
+            borderSide: BorderSide
+                .none, // Remove the border to use the container's shadow
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(10),
+            borderSide: BorderSide(
+              color: primarycolor, // Change border color when focused
+              width: 2.0,
+            ),
+          ),
+        ),
+      ),
+    );
 
-    //password field
-    final passwordField = TextFormField(
+// Password Field
+    final passwordField = Container(
+      decoration: BoxDecoration(
+        color: Colors.white, // Background color of the field
+        borderRadius: BorderRadius.circular(10), // Rounded corners
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey.withOpacity(0.5),
+            spreadRadius: 2,
+            blurRadius: 5,
+            offset: Offset(0, 3), // Shadow position
+          ),
+        ],
+      ),
+      child: TextFormField(
         autofocus: false,
         controller: passwordController,
         obscureText: true,
@@ -68,7 +116,7 @@ class _LoginScreenState extends State<LoginScreen> {
             return ("Password is required for login");
           }
           if (!regex.hasMatch(value)) {
-            return ("Please Enter Valid Password(Min. 6 Character)");
+            return ("Please Enter Valid Password (Min. 6 Characters)");
           }
           return null;
         },
@@ -77,19 +125,38 @@ class _LoginScreenState extends State<LoginScreen> {
         },
         textInputAction: TextInputAction.done,
         decoration: InputDecoration(
-          prefixIcon: const Icon(Icons.vpn_key),
-          contentPadding: const EdgeInsets.fromLTRB(20, 15, 20, 15),
+          prefixIcon: Icon(
+            Icons.vpn_key,
+            color: primarycolor,
+          ),
+          contentPadding: EdgeInsets.fromLTRB(20, 15, 20, 15),
           hintText: "Password",
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(10),
+            borderSide: BorderSide
+                .none, // Remove the border to use the container's shadow
           ),
-        ));
+          enabledBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(10),
+            borderSide: BorderSide
+                .none, // Remove the border to use the container's shadow
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(10),
+            borderSide: BorderSide(
+              color: primarycolor, // Change border color when focused
+              width: 2.0,
+            ),
+          ),
+        ),
+      ),
+    );
 
     //Login Button
     final LoginButton = Material(
       elevation: 5,
       borderRadius: BorderRadius.circular(30),
-      color: Colors.redAccent,
+      color: primarycolor,
       child: MaterialButton(
         padding: const EdgeInsets.fromLTRB(20, 15, 20, 15),
         minWidth: MediaQuery.of(context).size.width,
@@ -106,11 +173,11 @@ class _LoginScreenState extends State<LoginScreen> {
     );
 
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: fourthcolor,
       body: Center(
         child: SingleChildScrollView(
           child: Container(
-            color: Colors.white,
+            color: fourthcolor,
             child: Padding(
               padding: const EdgeInsets.all(36.0),
               child: Form(
@@ -156,12 +223,28 @@ class _LoginScreenState extends State<LoginScreen> {
                             child: const Text(
                               "SignUp",
                               style: TextStyle(
-                                  color: Colors.redAccent,
+                                  color: secondarycolor,
                                   fontWeight: FontWeight.bold,
                                   fontSize: 15),
                             ),
                           )
                         ],
+                      ),
+                      SizedBox(height: 50),
+                      GestureDetector(
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (context) => AdminReg()),
+                          );
+                        },
+                        child: const Text(
+                          'Want to join as an Alumni ?',
+                          style: TextStyle(
+                              color: secondarycolor,
+                              fontSize: 15,
+                              fontWeight: FontWeight.w600),
+                        ),
                       )
                     ],
                   )),
@@ -187,7 +270,7 @@ class _LoginScreenState extends State<LoginScreen> {
             .then((uid) => {
                   Fluttertoast.showToast(msg: "Login Successful"),
                   Navigator.of(context).pushReplacement(
-                      MaterialPageRoute(builder: (context) => AddPostScreen()))
+                      MaterialPageRoute(builder: (context) => HomeScreen()))
                 })
             .catchError((e) {
           Fluttertoast.showToast(msg: e!.message.toString());

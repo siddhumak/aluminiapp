@@ -1,9 +1,7 @@
 import 'package:demoapp/model/user_model.dart';
-import 'package:demoapp/screens/Profile_Screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/widgets.dart';
 
 class ChatApp extends StatelessWidget {
   @override
@@ -26,6 +24,7 @@ class ChatScreen extends StatefulWidget {
 class _ChatScreenState extends State<ChatScreen> {
   User? user = FirebaseAuth.instance.currentUser;
   UserModel loggedInUser = UserModel();
+  final TextEditingController _textController = TextEditingController();
 
   @override
   void initState() {
@@ -40,15 +39,13 @@ class _ChatScreenState extends State<ChatScreen> {
     });
   }
 
-  final TextEditingController _textController = TextEditingController();
-
   void _addMessage(String message) async {
     await FirebaseFirestore.instance.collection('messages').add({
       'text': message,
       'username': "${loggedInUser.firstName} ${loggedInUser.secondName}",
       'timestamp': DateTime.now(),
     });
-    _textController.clear(); // Clear the text field after sending message
+    _textController.clear();
   }
 
   Stream<List<DocumentSnapshot>> _getMessages() {
@@ -64,128 +61,148 @@ class _ChatScreenState extends State<ChatScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Group Chat'),
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back),
-          onPressed: () {
-            Navigator.pop(context);
-          },
+      appBar: PreferredSize(
+        preferredSize: Size.fromHeight(kToolbarHeight),
+        child: AppBar(
+          flexibleSpace: Container(
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                colors: [
+                  const Color.fromRGBO(33, 150, 243, 1),
+                  Colors.lightGreen,
+                ],
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+              ),
+            ),
+          ),
+          title: Text('Discussion Group'),
         ),
       ),
       body: Column(
-  children: [
-    Expanded(
-      child: StreamBuilder<List<DocumentSnapshot>>(
-        stream: _getMessages(),
-        builder: (context, snapshot) {
-          if (!snapshot.hasData) {
-            return Center(
-              child: CircularProgressIndicator(),
-            );
-          }
-          return ListView.builder(
-            reverse: true,
-            itemCount: snapshot.data!.length,
-            itemBuilder: (BuildContext context, int index) {
-              final messageData =
-                  snapshot.data![index].data() as Map<String, dynamic>;
-              final messageText = messageData['text'];
-              final messageUsername = messageData['username'];
-              Color titleColor =
-                  index % 3 == 0 ? Color.fromARGB(255, 184, 246, 165) : Color.fromARGB(255, 214, 244, 249);
-              return Padding(
-                padding: const EdgeInsets.symmetric(vertical: 8.0),
-                child: Container(
-                  width: 40,
-                  height: 80,
-                  decoration: BoxDecoration(
-                    boxShadow: [
-                      BoxShadow(
-                        color: Color.fromARGB(255, 154, 148, 148)
-                            .withOpacity(0.5),
-                        spreadRadius: 5,
-                        blurRadius: 7,
-                        offset: Offset(0, 3),
-                      ),
-                    ],
-                    borderRadius: BorderRadius.all(
-                      Radius.circular(20),
-                    ),
-                    color: Color.fromARGB(255, 235, 230, 230),
-                  ),
-                  child: Padding(
-                    padding: const EdgeInsets.fromLTRB(
-                        16.0, 16.0, 16.0, 8.0), // Add left padding
-                    child: Align(
-                      alignment: Alignment.centerRight,
-                      child: Column(
-                        
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          if (messageUsername != null &&
-                              messageUsername.isNotEmpty)
-                            Align(
-                              alignment: Alignment.centerRight,
-                              child: Container(
-                                padding: EdgeInsets.symmetric(
-                                    horizontal: 12.0, vertical: 6.0),
-                                decoration: BoxDecoration(
-                                  color: titleColor,
-                                  borderRadius: BorderRadius.circular(12.0),
-                                ),
-                                child: Text(
+        children: [
+          Expanded(
+            child: StreamBuilder<List<DocumentSnapshot>>(
+              stream: _getMessages(),
+              builder: (context, snapshot) {
+                if (!snapshot.hasData) {
+                  return Center(
+                    child: CircularProgressIndicator(),
+                  );
+                }
+                return ListView.builder(
+                  reverse: true,
+                  itemCount: snapshot.data!.length,
+                  itemBuilder: (BuildContext context, int index) {
+                    final messageData =
+                        snapshot.data![index].data() as Map<String, dynamic>;
+                    final messageText = messageData['text'];
+                    final messageUsername = messageData['username'];
+                    final isCurrentUser = messageUsername ==
+                        "${loggedInUser.firstName} ${loggedInUser.secondName}";
+
+                    return Padding(
+                      padding: const EdgeInsets.symmetric(
+                          vertical: 8.0, horizontal: 10.0),
+                      child: Align(
+                        alignment: isCurrentUser
+                            ? Alignment.centerRight
+                            : Alignment.centerLeft,
+                        child: Container(
+                          padding: EdgeInsets.all(10),
+                          decoration: BoxDecoration(
+                            color: isCurrentUser
+                                ? Color.fromARGB(255, 79, 178, 128)
+                                : Colors.grey[300],
+                            borderRadius: isCurrentUser
+                                ? BorderRadius.only(
+                                    topLeft: Radius.circular(15),
+                                    bottomLeft: Radius.circular(15),
+                                    bottomRight: Radius.circular(15),
+                                  )
+                                : BorderRadius.only(
+                                    topRight: Radius.circular(15),
+                                    bottomLeft: Radius.circular(15),
+                                    bottomRight: Radius.circular(15),
+                                  ),
+                          ),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              if (messageUsername != null &&
+                                  messageUsername.isNotEmpty)
+                                Text(
                                   messageUsername,
                                   style: TextStyle(
-                                      fontSize: 12.0,
-                                      fontWeight: FontWeight.bold),
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 12,
+                                    color: isCurrentUser
+                                        ? Colors.white
+                                        : Colors.black,
+                                  ),
+                                ),
+                              SizedBox(height: 5),
+                              Text(
+                                messageText,
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  color: isCurrentUser
+                                      ? Colors.white
+                                      : Colors.black,
                                 ),
                               ),
-                            ),
-                          SizedBox(height: 4.0),
-                          Align(
-                            alignment: Alignment.centerRight,
-                            child: Text(
-                              messageText,
-                              style: TextStyle(fontSize: 16.0),
-                            ),
+                            ],
                           ),
-                        ],
+                        ),
                       ),
-                    ),
-                  ),
-                ),
-              );
-            },
-          );
-        },
+                    );
+                  },
+                );
+              },
+            ),
+          ),
+          Divider(height: 1.0),
+          _buildTextComposer(),
+        ],
       ),
-    ),
-    Divider(height: 1.0),
-    _buildTextComposer(),
-  ],
-),
-
     );
   }
 
   Widget _buildTextComposer() {
     return Container(
-      padding: EdgeInsets.symmetric(horizontal: 8.0),
-      color: Colors.white,
+      padding: EdgeInsets.all(8.0),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.1),
+            spreadRadius: 2,
+            blurRadius: 5,
+            offset: Offset(0, -3),
+          ),
+        ],
+      ),
       child: Row(
         children: [
           Expanded(
             child: TextField(
               controller: _textController,
-              decoration: InputDecoration.collapsed(
-                hintText: 'Send a Message',
+              decoration: InputDecoration(
+                hintText: 'Send a message',
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(30.0),
+                ),
+                filled: true,
+                fillColor: Colors.grey[200],
+                contentPadding:
+                    EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
               ),
               onSubmitted: _handleSubmitted,
             ),
           ),
+          SizedBox(width: 8.0),
           IconButton(
-            icon: Icon(Icons.send),
+            icon: Icon(Icons.send, color: Colors.blue),
             onPressed: () => _handleSubmitted(_textController.text),
           ),
         ],
@@ -197,4 +214,8 @@ class _ChatScreenState extends State<ChatScreen> {
     if (text.trim().isEmpty) return;
     _addMessage(text);
   }
+}
+
+void main() {
+  runApp(ChatApp());
 }

@@ -1,3 +1,4 @@
+import 'package:demoapp/components/colors.dart';
 import 'package:flutter/material.dart';
 
 class RoundButton extends StatelessWidget {
@@ -9,10 +10,11 @@ class RoundButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Material(
-      borderRadius: BorderRadius.circular(10),
+      borderRadius: BorderRadius.circular(30),
+      elevation: 5,
       clipBehavior: Clip.antiAlias,
       child: MaterialButton(
-        color: Color.fromARGB(255, 1, 27, 69),
+        color: primarycolor,
         height: 50,
         minWidth: double.infinity,
         child: Text(

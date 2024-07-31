@@ -2,6 +2,8 @@ import 'package:demoapp/components/colors.dart';
 import 'package:demoapp/components/text_String.dart';
 import 'package:demoapp/onboarding_screen/model_on_boarding.dart';
 import 'package:demoapp/onboarding_screen/on_boarding_page_widget.dart';
+import 'package:demoapp/screens/login_screen.dart';
+import 'package:demoapp/screens/selectuser.dart';
 import 'package:flutter/material.dart';
 import 'package:liquid_swipe/liquid_swipe.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
@@ -33,7 +35,7 @@ class _OnBoardingScreen1State extends State<OnBoardingScreen1> {
       )),
       OnBoardingPageWidget(
           model: OnBoardingModel(
-        image: 'assets/pngegg.png',
+        image: 'assets/ob1.png',
         title: tOnBoardingTitle2,
         subTitle: tOnBoardingSubTitle2,
         counterText: tOnBoardingCounter2,
@@ -42,7 +44,7 @@ class _OnBoardingScreen1State extends State<OnBoardingScreen1> {
       )),
       OnBoardingPageWidget(
           model: OnBoardingModel(
-        image: 'assets/pngegg.png',
+        image: 'assets/obs5.png',
         title: tOnBoardingTitle3,
         subTitle: tOnBoardingSubTitle3,
         counterText: tOnBoardingCounter3,
@@ -86,7 +88,10 @@ class _OnBoardingScreen1State extends State<OnBoardingScreen1> {
               top: 50,
               right: 20,
               child: TextButton(
-                  onPressed: () {},
+                  onPressed: () {
+                    Navigator.of(context).push(MaterialPageRoute(
+                        builder: (context) => SelectionScreen()));
+                  },
                   child: const Text(
                     "Skip",
                     style: TextStyle(color: Colors.grey),

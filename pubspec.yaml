@@ -51,12 +51,13 @@ dependencies:
   modal_progress_hud_nsn: ^0.5.1
   persistent_bottom_nav_bar: ^5.0.2
   floating_bottom_bar: ^0.0.3
-  permission_handler: ^11.3.0
+  permission_handler: ^10.0.0
   url_launcher: ^6.2.5
   firebase_app_check: ^0.2.1+17
   liquid_swipe: ^3.1.0
   smooth_page_indicator: ^1.1.0
   mailer: ^6.1.0
+  get_it: ^7.7.0
 
 
 dev_dependencies:

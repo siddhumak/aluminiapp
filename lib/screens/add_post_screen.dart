@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:demoapp/components/colors.dart';
 import 'package:demoapp/components/roundbutton.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
@@ -92,6 +93,94 @@ class _AddPostScreenState extends State<AddPostScreen> {
         });
   }
 
+  Future<void> updateLikes(String postId, List<String> likes) async {
+    try {
+      // Check if the document exists
+      DocumentSnapshot snapshot = await FirebaseFirestore.instance
+          .collection("posts")
+          .doc(postId)
+          .get();
+
+      if (snapshot.exists) {
+        // Update the 'likes' field for the specific document
+        await FirebaseFirestore.instance
+            .collection("posts")
+            .doc(postId)
+            .update({
+          'likes': likes,
+        });
+      } else {
+        print("Document does not exist: $postId");
+      }
+    } catch (e) {
+      print("Error updating likes: $e");
+    }
+  }
+
+  Future<void> addPost() async {
+    setState(() {
+      showSpinner = true;
+    });
+    try {
+      int date = DateTime.now().millisecondsSinceEpoch;
+      // Upload post image to Firebase Storage
+      firebase_storage.Reference refupload =
+          firebase_storage.FirebaseStorage.instance.ref('/PostImages/$date');
+      UploadTask uploadTask = refupload.putFile(_image!.absolute);
+      await Future.value(uploadTask);
+
+      // Get download URL of the uploaded image
+      var newUrl = await refupload.getDownloadURL();
+
+      // Get current user details
+      final User? user = _auth.currentUser;
+      if (user != null) {
+        // Fetch profile URL from Firestore
+        final userData = await FirebaseFirestore.instance
+            .collection('users')
+            .doc(user.uid)
+            .get();
+        if (userData.exists) {
+          final profileUrl = userData[
+              'profile']; // Adjust field name as per your Firestore structure
+
+          // Let Firestore generate a unique ID for the document
+          DocumentReference postDocRef = await postsCollection.add({
+            'uid': user.uid.toString(),
+            'likes': [], // Initialize likes array for the post
+          });
+
+          // Retrieve the document ID which contains the uid
+          String postId = postDocRef.id;
+
+          // Write post data to Realtime Database
+          await postRef.child('Post List').child(postId).set({
+            'pId': date.toString(),
+            'pImage': newUrl.toString(),
+            'pTime': date.toString(),
+            'pTitle': titleController.text.toString(),
+            'pDescription': descriptionController.text.toString(),
+            'uEmail': user.email.toString(),
+            'Uid': user.uid.toString(),
+            'profileUrl': profileUrl,
+          });
+
+          // Show success message
+          toastMessage('Post Published');
+          setState(() {
+            showSpinner = false;
+          });
+        }
+      }
+    } catch (e) {
+      // Show error message
+      toastMessage(e.toString());
+      setState(() {
+        showSpinner = false;
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return ModalProgressHUD(
@@ -99,7 +188,7 @@ class _AddPostScreenState extends State<AddPostScreen> {
       child: Scaffold(
         appBar: AppBar(
           title: Text('Upload Feeds', style: TextStyle(color: Colors.white)),
-          backgroundColor: Color.fromARGB(255, 1, 27, 69),
+          backgroundColor: primarycolor,
           centerTitle: true,
         ),
         body: SingleChildScrollView(
@@ -149,15 +238,32 @@ class _AddPostScreenState extends State<AddPostScreen> {
                         keyboardType: TextInputType.text,
                         minLines: 1,
                         decoration: InputDecoration(
-                            labelText: 'Title',
-                            hintText: 'Enter Post Title',
-                            border: OutlineInputBorder(),
-                            hintStyle: TextStyle(
-                                color: Colors.grey,
-                                fontWeight: FontWeight.normal),
-                            labelStyle: TextStyle(
-                                color: Colors.grey,
-                                fontWeight: FontWeight.normal)),
+                          labelText: 'Title',
+                          hintText: 'Enter Post Title',
+                          border: OutlineInputBorder(),
+                          enabledBorder: OutlineInputBorder(
+                            borderSide: BorderSide(
+                                color: Theme.of(context).primaryColor,
+                                width: 1.0),
+                            borderRadius:
+                                BorderRadius.all(Radius.circular(8.0)),
+                          ),
+                          focusedBorder: OutlineInputBorder(
+                            borderSide: BorderSide(
+                                color: Theme.of(context).primaryColor,
+                                width: 2.0),
+                            borderRadius:
+                                BorderRadius.all(Radius.circular(8.0)),
+                          ),
+                          hintStyle: TextStyle(
+                            color: Colors.grey,
+                            fontWeight: FontWeight.normal,
+                          ),
+                          labelStyle: TextStyle(
+                            color: Colors.grey,
+                            fontWeight: FontWeight.normal,
+                          ),
+                        ),
                       ),
                       SizedBox(
                         height: 30,
@@ -168,15 +274,32 @@ class _AddPostScreenState extends State<AddPostScreen> {
                         minLines: 2,
                         maxLines: 5,
                         decoration: InputDecoration(
-                            labelText: 'Description',
-                            hintText: 'Enter Post Description',
-                            border: OutlineInputBorder(),
-                            hintStyle: TextStyle(
-                                color: Colors.grey,
-                                fontWeight: FontWeight.normal),
-                            labelStyle: TextStyle(
-                                color: Colors.grey,
-                                fontWeight: FontWeight.normal)),
+                          labelText: 'Description',
+                          hintText: 'Enter Post Description',
+                          border: OutlineInputBorder(),
+                          enabledBorder: OutlineInputBorder(
+                            borderSide: BorderSide(
+                                color: Theme.of(context).primaryColor,
+                                width: 1.0),
+                            borderRadius:
+                                BorderRadius.all(Radius.circular(8.0)),
+                          ),
+                          focusedBorder: OutlineInputBorder(
+                            borderSide: BorderSide(
+                                color: Theme.of(context).primaryColor,
+                                width: 2.0),
+                            borderRadius:
+                                BorderRadius.all(Radius.circular(8.0)),
+                          ),
+                          hintStyle: TextStyle(
+                            color: Colors.grey,
+                            fontWeight: FontWeight.normal,
+                          ),
+                          labelStyle: TextStyle(
+                            color: Colors.grey,
+                            fontWeight: FontWeight.normal,
+                          ),
+                        ),
                       ),
                     ],
                   ),
@@ -187,74 +310,7 @@ class _AddPostScreenState extends State<AddPostScreen> {
                 RoundButton(
                   title: 'Upload',
                   onPress: () async {
-                    setState(() {
-                      showSpinner = true;
-                    });
-                    try {
-                      int date = DateTime.now().millisecondsSinceEpoch;
-
-                      // Upload post image to Firebase Storage
-                      firebase_storage.Reference refupload = firebase_storage
-                          .FirebaseStorage.instance
-                          .ref('/PostImages/$date');
-                      UploadTask uploadTask =
-                          refupload.putFile(_image!.absolute);
-                      await Future.value(uploadTask);
-
-                      // Get download URL of the uploaded image
-                      var newUrl = await refupload.getDownloadURL();
-
-                      // Get current user details
-                      final User? user = _auth.currentUser;
-                      if (user != null) {
-                        // Fetch profile URL from Firestore
-                        final userData = await FirebaseFirestore.instance
-                            .collection('users')
-                            .doc(user.uid)
-                            .get();
-                        if (userData.exists) {
-                          final profileUrl = userData[
-                              'profile']; // Adjust field name as per your Firestore structure
-
-                          // Write post data to Realtime Database
-                          await postRef
-                              .child('Post List')
-                              .child(date.toString())
-                              .set({
-                            'pId': date.toString(),
-                            'pImage': newUrl.toString(),
-                            'pTime': date.toString(),
-                            'pTitle': titleController.text.toString(),
-                            'pDescription':
-                                descriptionController.text.toString(),
-                            'uEmail': user.email.toString(),
-                            'Uid': user.uid
-                                .toString(), // Store UID in Realtime Database
-                            'profileUrl': profileUrl,
-                          });
-
-// Store post ID and UID in Firestore
-                          await postsCollection.doc(date.toString()).set({
-                            'postId': date.toString(),
-                            'uid':
-                                user.uid.toString(), // Store UID in Firestore
-                            'likes': [], // Initialize likes array for the post
-                          });
-                        }
-                      }
-
-                      // Show success message
-                      toastMessage('Post Published');
-                      setState(() {
-                        showSpinner = false;
-                      });
-                    } catch (e) {
-                      // Show error message
-                      toastMessage(e.toString());
-                      setState(() {
-                        showSpinner = false;
-                      });
-                    }
+                    await addPost();
                   },
                 )
               ],

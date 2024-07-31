@@ -26,4 +26,6 @@ class Storage {
       }
     }
   }
+
+  uploadImage(File file) {}
 }
