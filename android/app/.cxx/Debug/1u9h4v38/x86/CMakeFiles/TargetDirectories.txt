@@ -1,0 +1,2 @@
+C:/trishvi_project/aluminiapp/android/app/.cxx/Debug/1u9h4v38/x86/CMakeFiles/edit_cache.dir
+C:/trishvi_project/aluminiapp/android/app/.cxx/Debug/1u9h4v38/x86/CMakeFiles/rebuild_cache.dir

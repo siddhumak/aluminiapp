@@ -1,0 +1,1 @@
+C:\trishvi_project\aluminiapp\build\app\intermediates\cxx\RelWithDebInfo\2o5m476t\obj\arm64-v8a

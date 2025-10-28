@@ -1,0 +1,2 @@
+C:/trishvi_project/aluminiapp/android/app/.cxx/RelWithDebInfo/2o5m476t/arm64-v8a/CMakeFiles/edit_cache.dir
+C:/trishvi_project/aluminiapp/android/app/.cxx/RelWithDebInfo/2o5m476t/arm64-v8a/CMakeFiles/rebuild_cache.dir
